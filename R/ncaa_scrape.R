@@ -85,11 +85,21 @@ ncaa_scrape <- function(teamid, year, type = "batting") {
       rvest::html_table(fill = TRUE)
     df <- as.data.frame(data)
     df <- df[,-6]
+    if (year == 2017) {
+      df <- df[,-6]
+    }
+    if (year < 2017) {
+      df$TC <- as.numeric(df$PO) + as.numeric(df$A) + as.numeric(df$E)
+    }
+    if (year == 2013) {
+      df$G <- df$GP
+    }
     df$year <- year
     df$teamid <- teamid
     df <- df %>%
       dplyr::left_join(master_ncaa_team_lu, by = c("teamid" = "school_id", "year" = "year"))
-    df <- dplyr::select(df, year, school, conference, division, everything())
+    df <- dplyr::select(df, year, school, conference, division, Jersey, Player,
+                        Yr, Pos, GP, G, PO, A, TC, everything())
     df$Player <- gsub("x ", "", df$Player)
     df <- dplyr::select(df, year, school, conference, division, Jersey, Player,
                         Yr, Pos, GP, G, PO, A, TC, E, FldPct, CI, PB, SBA, CSB,
@@ -122,3 +132,4 @@ ncaa_scrape <- function(teamid, year, type = "batting") {
   return(df)
 
 }
+fielding <- ncaa_scrape(8, 2013, "fielding")
