@@ -83,7 +83,7 @@ ncaa_scrape <- function(teamid, year, type = "batting") {
       rvest::html_nodes("table") %>%
       .[[3]] %>%
       rvest::html_table(fill = TRUE)
-    df <= as.data.frame(data)
+    df <- as.data.frame(data)
     df <- df[,-6]
     df$year <- year
     df$teamid <- teamid
@@ -92,7 +92,7 @@ ncaa_scrape <- function(teamid, year, type = "batting") {
     df <- dplyr::select(df, year, school, conference, division, everything())
     df$Player <- gsub("x ", "", df$Player)
     df <- dplyr::select(df, year, school, conference, division, Jersey, Player,
-                        Yr, Pos, GP, GS, PO, A, TC, E, FldPct, CI, PB, SBA, CSB,
+                        Yr, Pos, GP, G, PO, A, TC, E, FldPct, CI, PB, SBA, CSB,
                         IDP, TP)
   }
 
