@@ -132,4 +132,3 @@ ncaa_scrape <- function(teamid, year, type = "batting") {
   return(df)
 
 }
-fielding <- ncaa_scrape(8, 2013, "fielding")
