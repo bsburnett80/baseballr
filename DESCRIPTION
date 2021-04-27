@@ -1,12 +1,13 @@
 Package: baseballr
 Title: Functions for acquiring and analyzing baseball data
-Version: 0.6.1
+Version: 0.8.4
 Author: Bill Petti <billpetti@gmail.com>
 Authors@R: c(
     person("Bill", "Petti", email = "billpetti@gmail.com",
       role = c("aut", "cre")),
-    person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = c("ctb")),
-    person("Ben", "Dilday", email = "ben.dilday.phd@gmail.com", role = "ctb"))
+    person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = "ctb"),
+    person("Ben", "Dilday", email = "ben.dilday.phd@gmail.com", role = "ctb"),
+    person("Robert", "Frey", email = "rfrey22@gmail.com", role = "ctb"))
 Maintainer: Bill Petti <billpetti@gmail.com>
 Description: Provides numerous functions for acquiring and analyzing baseball
     data. Data can be acquired from various online sources from within R.
@@ -15,6 +16,7 @@ Depends:
     R (>= 3.2.0)
 Imports:
     dplyr,
+    magrittr,
     ggplot2,
     highcharter,
     janitor,
@@ -30,12 +32,13 @@ Imports:
     XML,
     xml2,
     pbapply,
-    tibble
+    tibble,
+    vroom
 License: MIT + file LICENSE
 URL: https://billpetti.github.io/baseballr/
 BugReports: https://github.com/BillPetti/baseballr/issues
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Suggests:
     knitr,
     rmarkdown,

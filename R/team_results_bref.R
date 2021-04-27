@@ -3,6 +3,7 @@
 #' This function allows you to scrape schedule and results for a major league team from Baseball-Reference.com
 #' @param Tm The abbreviation used by Baseball-Reference.com for the team whose results you want to scrape.
 #' @param year Season for which you want to scrape the park factors.
+#' @import dplyr
 #' @importFrom xml2 read_html
 #' @importFrom rvest html_table
 #' @keywords MLB, sabermetrics
@@ -12,16 +13,24 @@
 #' team_results_bref("TBR", 2008)
 
 team_results_bref <-function(Tm, year) {
-  data <- read_html(paste0("https://www.baseball-reference.com/teams/", Tm, "/", year, "-schedule-scores.shtml")) %>% html_nodes("table")
-  data <- data[[length(data)]] %>% html_table() %>% `[`(-3) %>%
-    rename(Record = `W-L`, Result = `W/L`, Gm = `Gm#`)
 
-  col_names <- c('Gm','Date','Tm','H_A','Opp','Result','R','RA','Inn','Record','Rank','GB','Win','Loss','Save','Time','D/N','Attendance','Streak', 'Orig_Scheduled')
+  message('Data courtesy of Baseball-Reference.com. Please consider supporting Baseball-Reference by signing up for a Stathead account: https://stathead.com')
+
+  url <- paste0("https://www.baseball-reference.com/teams/", Tm, "/", year, "-schedule-scores.shtml")
+
+  data <- read_html(url) %>%
+    html_nodes("table")
+
+  data <- data[[length(data)]] %>%
+    html_table() %>%
+    .[-3]
+
+  col_names <- c('Gm','Date','Tm','H_A','Opp','Result','R','RA','Inn','Record','Rank',
+                 'GB','Win','Loss','Save','Time','D/N','Attendance', 'cLI', 'Streak', 'Orig_Scheduled')
 
   names(data) <- col_names
 
   data$H_A <- ifelse(grepl("@", data$H_A, fixed = TRUE), "A", "H")
-  #data <- filter_(data, ~Rk != "Rk")
 
   data$Attendance <- gsub(",", "", data$Attendance)
 
@@ -36,7 +45,7 @@ team_results_bref <-function(Tm, year) {
   data$Year <- year
   data <- data[, 1:ncol(data)]
   data <- data %>%
-    dplyr::filter_(~!grepl("Gm#", Gm))
+    dplyr::filter(!grepl("Gm#", Gm))
 
   return(data)
 }

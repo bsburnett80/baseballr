@@ -4,14 +4,12 @@
 #'
 #' @param x A boxscore.xml url for a given game from the MLBAM GameDay app data.
 #' @keywords MLB, PITCHf/x, Game Day, boxscore, sabermetrics
+#' @importFrom XML xmlParse xmlToList
 #' @export
-#' @examples
-#' # batters
+#' @examples \dontrun{
 #' url_base <- "http://gd2.mlb.com/components/game/mlb/"
-#' url <- paste0(url_base, 
-#'   "year_2016/month_05/day_21/gid_2016_05_21_milmlb_nynmlb_1/boxscore.xml")
-#' batter_boxscore(url)
-
+#' url <- paste0(url_base, "year_2016/month_05/day_21/gid_2016_05_21_milmlb_nynmlb_1/boxscore.xml")
+#' batter_boxscore(url)}
 
 batter_boxscore <- function(x) {
   url <- x
@@ -22,14 +20,14 @@ batter_boxscore <- function(x) {
   home_batters <- lapply(xml_data[[3]][x], function(x)
     as.data.frame.list(x, stringsAsFactors=FALSE)) %>%
     bind_rows()
-  home_batters$team <- xml_data[[8]][7]
+  home_batters$team <- xml_data[[8]]['home_id']
 
   a_end <- length(xml_data[[5]]) - 5
   a_x <- seq(1:a_end)
   away_batters <- lapply(xml_data[[5]][a_x], function(x)
     as.data.frame.list(x, stringsAsFactors=FALSE)) %>%
     bind_rows()
-  away_batters$team <- xml_data[[8]][6]
+  away_batters$team <- xml_data[[8]]['away_id']
 
   if(!("gidp" %in% colnames(home_batters)))
   {home_batters$gidp <- NA}
