@@ -124,14 +124,18 @@ ncaa_scrape <- function(teamid, year, type = 'batting') {
     df <- dplyr::select(df, year, school, conference, division, everything())
     df$Player <- gsub("x ", "", df$Player)
     
+    if (year < 2014) {
+      df$G <- df$GP
+    }
+    
     df <- dplyr::select(df,year,school,conference,division,Jersey,Player,
-                        Yr,Pos,GP,GS,PO,A,E,FldPct,CI,PB,SBA,CSB,IDP,TP,
+                        Yr,Pos,GP,G,PO,A,E,FldPct,CI,PB,SBA,CSB,IDP,TP,
                         teamid,conference_id)
     
     character_cols <- c("year", "school", "conference", "Jersey", "Player",
                         "Yr", "Pos")
     
-    numeric_cols <- c("division",  "GP", "PO", "GS", "A", "E", "FldPct",
+    numeric_cols <- c("division",  "GP", "PO", "G", "A", "E", "FldPct",
                       "CI", "PB", "SBA", "CSB", "IDP", "TP",
                       "teamid", "conference_id")
     
