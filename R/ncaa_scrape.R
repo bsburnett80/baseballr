@@ -68,7 +68,7 @@ ncaa_scrape <- function(teamid, year, type = 'batting') {
 
     }
 
-  else {
+  else if (type == "pitching") {
     year_id <- subset(ncaa_season_id_lu, season == year, select = id)
     type_id <- subset(ncaa_season_id_lu, season == year, select = pitching_id)
     url <- paste0("http://stats.ncaa.org/team/", teamid, "/stats?id=", year_id, "&year_stat_category_id=", type_id)
@@ -105,6 +105,42 @@ ncaa_scrape <- function(teamid, year, type = 'batting') {
     df <- df %>%
       mutate_at(vars(numeric_cols), ~as.numeric(as.character(.x)))
 
+  }
+  else {
+    year_id <- subset(ncaa_season_id_lu, season == year, select = id)
+    type_id <- subset(ncaa_season_id_lu, season == year, select = fielding_id)
+    url <- paste0("http://stats.ncaa.org/team/", teamid, "/stats?id=", year_id, "&year_stat_category_id=", type_id)
+    data_read <- xml2::read_html(url)
+    data <- data_read %>%
+      rvest::html_nodes("table") %>%
+      .[[3]] %>%
+      rvest::html_table(fill = TRUE)
+    df <- as.data.frame(data)
+    df <- df[,-6]
+    df$year <- year
+    df$teamid <- teamid
+    df <- df %>%
+      dplyr::left_join(master_ncaa_team_lu, by = c("teamid" = "school_id", "year" = "year"))
+    df <- dplyr::select(df, year, school, conference, division, everything())
+    df$Player <- gsub("x ", "", df$Player)
+    
+    df <- dplyr::select(df,year,school,conference,division,Jersey,Player,
+                        Yr,Pos,GP,GS,PO,A,E,FldPct,CI,PB,SBA,CSB,IDP,TP,
+                        teamid,conference_id)
+    
+    character_cols <- c("year", "school", "conference", "Jersey", "Player",
+                        "Yr", "Pos")
+    
+    numeric_cols <- c("division",  "GP", "PO", "GS", "A", "E", "FldPct",
+                      "CI", "PB", "SBA", "CSB", "IDP", "TP",
+                      "teamid", "conference_id")
+    
+    df <- df %>%
+      mutate_at(vars(character_cols), ~as.character(.x))
+    
+    df <- df %>%
+      mutate_at(vars(numeric_cols), ~as.numeric(as.character(.x)))
+    
   }
 
   player_url <- data_read %>%
