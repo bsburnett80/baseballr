@@ -51,7 +51,7 @@ get_ncaa_schedule_info <- function(teamid = NULL,
       tibble::rownames_to_column('row')
 
     game_info_url <- payload %>%
-      rvest::html_nodes("fieldset .skipMask") %>%
+      rvest::html_nodes("fieldset td .skipMask") %>%
       rvest::html_attr("href") %>%
       as.data.frame() %>%
       dplyr::rename(slug = '.') %>%
@@ -59,7 +59,7 @@ get_ncaa_schedule_info <- function(teamid = NULL,
       tibble::rownames_to_column('row')
 
     game_result <- payload %>%
-      rvest::html_nodes("fieldset .skipMask") %>%
+      rvest::html_nodes("fieldset td .skipMask") %>%
       rvest::html_text() %>%
       as.data.frame() %>%
       dplyr::rename(result = '.') %>%
